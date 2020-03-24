@@ -25,7 +25,7 @@ SECRET_KEY = 'd1zok9uycmn4e5sv1*pe&=*f0m-2-a7_24ozh9=)rwpex#ocdg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shareManager.apps.SharemanagerConfig',
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_DIR = os.path.join(BASE_DIR, "static")
