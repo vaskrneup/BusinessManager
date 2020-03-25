@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import datetime
 
 # custom imports !
 from shareManager.extras import NepseAPI
@@ -7,7 +8,13 @@ from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName
 
 
 def update_database(request):
-    share_values = NepseAPI.get_nepse_data("2010-04-15", "2010-04-17")
+    aggregate_cache = ShareCompanyAggregate.objects.all().last()
+
+    if aggregate_cache:
+        last_record_date = aggregate_cache.total_transaction_date
+        share_values = NepseAPI.get_nepse_data(str(last_record_date + datetime.timedelta(days=1)), "2011-04-15")
+    else:
+        share_values = NepseAPI.get_nepse_data_for_date("2010-04-15")
 
     for date in share_values:
         for time in share_values[date]:
