@@ -68,9 +68,9 @@ def update_database(request):
                 third.append(company_detail)
 
         count += 1
-        print(count)
+        print(f"Total Number of data: {count}")
     ShareCompanyAggregate.objects.bulk_create(first)
     # ShareCompanyName.objects.bulk_create(sec)
     ShareCompanyDetail.objects.bulk_create(third)
 
-    return HttpResponse("Done Something !")
+    return HttpResponse(f"Done Something, total data grabbed: {count}<br><br><hr>Share Data:<br>{share_values}")
