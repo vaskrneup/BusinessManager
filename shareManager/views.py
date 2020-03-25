@@ -12,9 +12,15 @@ def update_database(request):
 
     if aggregate_cache:
         last_record_date = aggregate_cache.total_transaction_date
-        share_values = NepseAPI.get_nepse_data(str(last_record_date + datetime.timedelta(days=1)), "2011-04-15")
+        share_values = NepseAPI.get_nepse_data(str(last_record_date + datetime.timedelta(days=1)),
+                                               str(datetime.date.today()))
     else:
         share_values = NepseAPI.get_nepse_data_for_date("2010-04-15")
+
+    count = 0
+
+    first = []
+    third = []
 
     for date in share_values:
         for time in share_values[date]:
@@ -27,10 +33,13 @@ def update_database(request):
                 total_quantity=int(key["total_quantity"]),
                 total_num_of_transactions=int(key["total_num_of_transactions"])
             )
-            aggregate.save()
+            # aggregate.save()
+            first.append(aggregate)
+
+            cache = ShareCompanyName.objects.all()
 
             for c in key["company_data"]:
-                share_company_name_cache = ShareCompanyName.objects.filter(company_full_name=c[1])
+                share_company_name_cache = cache.filter(company_full_name=c[1])
 
                 if share_company_name_cache.exists():
                     share_company = share_company_name_cache.first()
@@ -39,6 +48,7 @@ def update_database(request):
                         company_full_name=c[1]
                     )
                     share_company.save()
+                    # sec.append(share_company)
 
                 company_detail = ShareCompanyDetail(
                     company_name=share_company,
@@ -54,5 +64,13 @@ def update_database(request):
                     company_previous_closing=float(c[8]),
                     company_difference=float(c[9])
                 )
-                company_detail.save()
+                # company_detail.save()
+                third.append(company_detail)
+
+        count += 1
+        print(count)
+    ShareCompanyAggregate.objects.bulk_create(first)
+    # ShareCompanyName.objects.bulk_create(sec)
+    ShareCompanyDetail.objects.bulk_create(third)
+
     return HttpResponse("Done Something !")
