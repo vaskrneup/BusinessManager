@@ -2,4 +2,5 @@ venv
 .idea
 data.log
 shareManager/extras/data.log
+templates/HAHAHA
 db.sqlite3
