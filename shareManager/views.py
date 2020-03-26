@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 import datetime
 
 # custom imports !
@@ -108,8 +109,22 @@ def update_database(request):
 
 
 # start views for rendering dashboard pages !
-def dashboard_home(request):
+@login_required
+def share_manager_dashboard_home(request):
+    # keeps track of data that is to be rendered in django templates !
     template_data = {
-        # "title": "Dashboard"
+        # "title": "Dashboard",
+        "current": "sm_dashboard"
     }
     return render(request, template_name="shareManager/dashboard_home.html", context=template_data)
+
+
+# for displaying user profile and their data !
+@login_required
+def share_manager_dashboard_profile(request):
+    # for rendering data !
+    template_data = {
+        "current": "sm_profile"
+    }
+
+    return render(request, template_name="shareManager/dashboard_profile.html", context=template_data)
