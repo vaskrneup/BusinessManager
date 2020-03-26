@@ -119,6 +119,7 @@ def share_manager_dashboard_home(request):
     return render(request, template_name="shareManager/dashboard_home.html", context=template_data)
 
 
+# TODO: Transfer this to UserDashboard !
 # for displaying user profile and their data !
 @login_required
 def share_manager_dashboard_profile(request):
