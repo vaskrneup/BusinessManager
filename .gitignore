@@ -4,4 +4,4 @@ data.log
 shareManager/extras/data.log
 templates/HAHAHA
 db.sqlite3
-
+__pycache__
