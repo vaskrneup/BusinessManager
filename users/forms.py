@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 
 
+# For Local Form !
 class UserLoginForm(forms.Form):
     username = forms.CharField(max_length=60, required=True, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     password = forms.CharField(max_length=80, required=True, widget=forms.PasswordInput())
