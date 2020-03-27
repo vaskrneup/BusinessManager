@@ -5,3 +5,6 @@ shareManager/extras/data.log
 templates/HAHAHA
 db.sqlite3
 __pycache__
+BusinessManager/__pycache__
+shareManager/__pycache__
+users/__pycache__
