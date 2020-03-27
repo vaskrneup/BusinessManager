@@ -12,28 +12,41 @@ class UserLoginForm(forms.Form):
 
 
 class UserRegisterForm(forms.ModelForm):
-    confirm_password = forms.CharField(max_length=80, widget=forms.PasswordInput())
+    confirm_password = forms.CharField(max_length=32, widget=forms.PasswordInput())
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'username', 'password')
+        fields = ('first_name', 'last_name', 'email', 'username', 'password', 'confirm_password')
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegisterForm, self).__init__(*args, **kwargs)
+        self.fields["password"].widget = forms.PasswordInput()
+        self.fields["password"].min_length = 8
+        self.fields["first_name"].required = True
+        self.fields["last_name"].required = True
+        self.fields["email"].required = True
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
 
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email Already Taken !")
+            raise forms.ValidationError("Email already taken.")
 
-    def clean_password(self):
-        if self.cleaned_data.get("password") != self.cleaned_data.get("confirm_password"):
-            raise forms.ValidationError("Passwords didn't match !")
+    def clean(self):
+        cleaned_data = super(UserRegisterForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password:
+            if password != confirm_password:
+                self.add_error("password", "passwords didn't match.")
+                self.add_error("confirm_password", "passwords didn't match.")
+            elif len(password) < 8 or len(password) > 32:
+                self.add_error("password", "Password must be of length between 8 and 32.")
+                self.add_error("confirm_password", "Password must be of length between 8 and 32.")
 
 
 class UserProfileRegistrationForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('user_profile_picture', 'user_phone_number')
-
-    def clean_user_phone_number(self):
-        # TODO: Complete this !
-        pass

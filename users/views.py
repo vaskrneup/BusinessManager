@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate as authenticate_user, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -8,12 +8,40 @@ from . import forms
 
 # for registering user !
 def user_register(request):
-    user_register_form = forms.UserProfileRegistrationForm(request.POST)
-    user_register_form = forms.UserProfileRegistrationForm()
+    # check if request is post or not !
+    if request.method == "POST":
+        # create form with filled data !
+        user_profile_form = forms.UserProfileRegistrationForm(request.POST, request.FILES)
+        user_register_form = forms.UserRegisterForm(request.POST)
+
+        # check if form is valid or not !
+        if user_register_form.is_valid() and user_profile_form.is_valid():
+            # save user form grabbing the model it created !
+            form_user = user_register_form.save()
+
+            # get user profile model without saving to database !
+            form_user_profile = user_profile_form.save(commit=False)
+            # provide the user who is related to this profile !
+            form_user_profile.user = form_user
+            # save the profile !
+            form_user_profile.save()
+
+            # login the user !
+            login(request, form_user)
+            # display message !
+            messages.info(request, "You are now logged in !")
+            # TODO: This must be changed to main profile !
+            return redirect('shareManager:dashboard_profile')
+    else:
+        # create empty form !
+        user_register_form = forms.UserRegisterForm()
+        user_profile_form = forms.UserProfileRegistrationForm()
 
     # for rendering data !
     template_data = {
-        "title": "User Register"
+        "user_register_form": user_register_form,
+        "user_profile_form": user_profile_form,
+        "title": "User Register",
     }
 
     return render(request, template_name="users/user_register.html", context=template_data)
