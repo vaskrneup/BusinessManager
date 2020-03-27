@@ -94,7 +94,7 @@ def user_login(request):
 def user_logout(request):
     # check if user is authenticated !
     if request.user.is_authenticated:
-        # logout the user !
+        # logout the user !!
         logout(request)
         # TODO: redirect to home page later !
         return redirect('users:user_login')
