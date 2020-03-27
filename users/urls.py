@@ -14,5 +14,5 @@ urlpatterns = [
     # rendering for unauthenticated users !
     path("login/", user_views.user_login, name="user_login"),
     path("register/", user_views.user_register, name="user_register"),
-    path("reset-password/", user_views.user_password_reset, name="user_password_reset")
+    path("reset-password/", user_views.user_password_reset, name="user_password_reset"),
 ]
