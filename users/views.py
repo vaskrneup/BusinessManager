@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate as authenticate_user, login, user_logged_in
+from django.shortcuts import render, redirect, HttpResponse
+from django.contrib.auth import authenticate as authenticate_user, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
@@ -53,6 +53,8 @@ def user_login(request):
                         username=_user.username,
                         password=password
                     )
+                    if not current_user.is_active:
+                        current_user = None
                 else:
                     # if email doesnt exists no current user !
                     current_user = None
@@ -62,6 +64,8 @@ def user_login(request):
                 current_user = authenticate_user(
                     request, username=username_or_email, password=password
                 )
+                if not current_user.is_active:
+                    current_user = None
 
             # check if verified !
             if current_user:
@@ -84,6 +88,18 @@ def user_login(request):
     }
 
     return render(request, template_name="users/user_login.html", context=template_data)
+
+
+# for logging out user !
+def user_logout(request):
+    # check if user is authenticated !
+    if request.user.is_authenticated:
+        # logout the user !
+        logout(request)
+        # TODO: redirect to home page later !
+        return redirect('users:user_login')
+    else:
+        return redirect('users:user_login')
 
 
 # for resetting user password !
