@@ -1,5 +1,8 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+{% load user_template_tags %}
+
 
 {% block page_title %}
     {% if title %}
@@ -11,7 +14,7 @@
 
 {% block body %}
     <div class="container-fluid">
-        <h3 class="text-dark mb-4">Profile</h3>
+        {#        <h3 class="text-dark mb-4">Profile</h3>#}
         <div class="row mb-3">
             <div class="col-lg-4">
                 <div class="card mb-3">
@@ -94,39 +97,59 @@
                     <div class="col">
                         <div class="card shadow mb-3">
                             <div class="card-header py-3">
-                                <p class="text-primary m-0 font-weight-bold">User Settings</p>
+                                <p class="text-primary m-0 font-weight-bold">User Settings
+                                    {#                                TODO: include all these in one and make it efficient ! #}
+                                    {% if user.userprofile.can_update_profile %}
+                                        <span class="small text-danger">
+                                        &nbsp;&nbsp;&nbsp;you can edit this only once !
+                                        </span>
+                                    {% endif %}
+                                </p>
                             </div>
                             <div class="card-body">
-                                <form>
-                                    <div class="form-row">
-                                        <div class="col">
-                                            <div class="form-group"><label
-                                                    for="username"><strong>Username</strong></label><input
-                                                    class="form-control" type="text" placeholder="user.name"
-                                                    name="username"></div>
+                                <form disabled action="{% url 'users:user_profile_update' %}" method="POST"
+                                      enctype="multipart/form-data">
+                                    <fieldset {% if not user.userprofile.can_update_profile %}disabled{% endif %}>
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            <div class="col">
+
+                                                {{ user_update_form.first_name|as_crispy_field }}
+
+                                            </div>
+                                            <div class="col">
+                                                {{ user_update_form.last_name|as_crispy_field }}
+
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-group"><label for="email"><strong>Email
-                                                Address</strong></label><input class="form-control" type="email"
-                                                                               placeholder="user@example.com"
-                                                                               name="email"></div>
+
+                                        <div class="form-row">
+                                            <div class="col">
+                                                {{ user_update_form.username|as_crispy_field }}
+
+                                            </div>
+                                            <div class="col">
+                                                {{ user_profile_update_form.user_date_of_birth|as_crispy_field }}
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="col">
-                                            <div class="form-group"><label for="first_name"><strong>First Name</strong></label><input
-                                                    class="form-control" type="text" placeholder="John"
-                                                    name="first_name"></div>
+                                        <div class="form-row">
+                                            <div class="col">
+                                                {{ user_profile_update_form.user_identification_card_picture_front|as_crispy_field }}
+                                            </div>
+                                            <div class="col">
+                                                {{ user_profile_update_form.user_identification_card_picture_back|as_crispy_field }}
+
+                                            </div>
+                                            <div class="col">
+                                                {{ user_profile_update_form.user_identification_card_number|as_crispy_field }}
+
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-group"><label for="last_name"><strong>Last
-                                                Name</strong></label><input class="form-control" type="text"
-                                                                            placeholder="Doe" name="last_name"></div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm" type="submit">Save Settings</button>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary btn-sm" type="submit">Save Settings</button>
-                                    </div>
+                                    </fieldset>
                                 </form>
                             </div>
                         </div>

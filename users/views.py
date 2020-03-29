@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate as authenticate_user, login, logout
 from django.contrib import messages
@@ -17,7 +18,11 @@ def user_register(request):
         # check if form is valid or not !
         if user_register_form.is_valid() and user_profile_form.is_valid():
             # save user form grabbing the model it created !
-            form_user = user_register_form.save()
+            form_user = user_register_form.save(commit=False)
+            # create hash for user password !
+            form_user.set_password(user_register_form.cleaned_data["password"])
+            # save user !
+            form_user.save()
 
             # get user profile model without saving to database !
             form_user_profile = user_profile_form.save(commit=False)
@@ -138,3 +143,27 @@ def user_password_reset(request):
     }
 
     return render(request, template_name="users/forgot_password.html", context=template_data)
+
+
+# Global View !
+@login_required
+def update_user_profile_data(request):
+    # data is submitted to form !
+    if request.method == "POST":
+        user_update_form = forms.UserUpdateSettingsForm(request.POST, instance=request.user)
+        user_profile_update_form = forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
+                                                                       instance=request.user.userprofile)
+
+        if user_update_form.is_valid() and user_profile_update_form.is_valid():
+            if request.user.userprofile.can_update_profile():
+                user_update_form.save()
+                user_profile = user_profile_update_form.save(commit=False)
+                user_profile.profile_updated = True
+                user_profile.save()
+                messages.info(request, "Your data is updated successfully !")
+            else:
+                messages.warning(request, "You have already updated profile once !")
+        else:
+            messages.info(request, "Please provide valid data !")
+
+    return redirect("shareManager:dashboard_profile")

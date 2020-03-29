@@ -1,15 +1,19 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 import datetime
 
 # custom imports !
 from shareManager.extras import NepseAPI
 from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName
+from users import forms as user_forms
 
 
 # admin views for doing db things and other updates !
+@login_required
 def update_database(request):
+    if not request.user.is_superuser:
+        raise Http404("Link not found !")
     """
     :param request: gets request while requesting a file !
     :return: HTTPResponse for rendering as html in webpage !
@@ -123,9 +127,15 @@ def share_manager_dashboard_home(request):
 # for displaying user profile and their data !
 @login_required
 def share_manager_dashboard_profile(request):
+    # create forms with data pre filled !
+    user_update_form = user_forms.UserUpdateSettingsForm(instance=request.user)
+    user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(instance=request.user.userprofile)
+
     # for rendering data !
     template_data = {
-        "current": "sm_profile"
+        "user_update_form": user_update_form,
+        "user_profile_update_form": user_profile_update_form,
+        "current": "sm_profile",
     }
 
     return render(request, template_name="shareManager/dashboard_profile.html", context=template_data)

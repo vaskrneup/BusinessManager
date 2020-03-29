@@ -32,5 +32,8 @@ class UserProfile(models.Model):
     def get_user_full_name(self):
         return self.user.get_full_name()
 
+    def can_update_profile(self):
+        return not self.profile_updated
+
     def __str__(self):
         return f"{self.user.username} profile picture !"
