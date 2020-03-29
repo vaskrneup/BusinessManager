@@ -11,7 +11,6 @@ urlpatterns = [
     # Users URLS !
     # rendering for authenticated users !
     path("logout/", user_views.user_logout, name="user_logout"),
-    path("update-user-data/", user_views.update_user_profile_data, name="user_profile_update"),
 
     # rendering for unauthenticated users !
     path("login/", user_views.user_login, name="user_login"),

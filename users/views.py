@@ -97,8 +97,6 @@ def user_login(request):
                 current_user = authenticate_user(
                     request, username=username_or_email, password=password
                 )
-                if not current_user.is_active:
-                    current_user = None
 
             # check if verified !
             if current_user:
@@ -143,27 +141,3 @@ def user_password_reset(request):
     }
 
     return render(request, template_name="users/forgot_password.html", context=template_data)
-
-
-# Global View !
-@login_required
-def update_user_profile_data(request):
-    # data is submitted to form !
-    if request.method == "POST":
-        user_update_form = forms.UserUpdateSettingsForm(request.POST, instance=request.user)
-        user_profile_update_form = forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
-                                                                       instance=request.user.userprofile)
-
-        if user_update_form.is_valid() and user_profile_update_form.is_valid():
-            if request.user.userprofile.can_update_profile():
-                user_update_form.save()
-                user_profile = user_profile_update_form.save(commit=False)
-                user_profile.profile_updated = True
-                user_profile.save()
-                messages.info(request, "Your data is updated successfully !")
-            else:
-                messages.warning(request, "You have already updated profile once !")
-        else:
-            messages.info(request, "Please provide valid data !")
-
-    return redirect("shareManager:dashboard_profile")

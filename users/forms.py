@@ -17,7 +17,7 @@ class UserLoginForm(forms.Form):
 
 # for registering user !
 class UserRegisterForm(forms.ModelForm):
-    confirm_password = forms.CharField(max_length=32, widget=forms.PasswordInput())
+    confirm_password = forms.CharField(min_length=8, max_length=32, widget=forms.PasswordInput())
 
     class Meta:
         model = User
@@ -95,10 +95,6 @@ class UserProfileUpdateSettingsForm(forms.ModelForm):
         self.fields["user_identification_card_picture_back"].required = True
         self.fields["user_identification_card_number"].required = True
         self.fields["user_date_of_birth"].required = True
-
-        # today_date = datetime.date.today()
-
-        self.fields["user_date_of_birth"].widget = AdminDateWidget()
 
 
 # for updating user profile picture !

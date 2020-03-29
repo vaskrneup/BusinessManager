@@ -107,7 +107,7 @@
                                 </p>
                             </div>
                             <div class="card-body">
-                                <form disabled action="{% url 'users:user_profile_update' %}" method="POST"
+                                <form disabled action="{% url 'shareManager:dashboard_profile' %}" method="POST"
                                       enctype="multipart/form-data">
                                     <fieldset {% if not user.userprofile.can_update_profile %}disabled{% endif %}>
                                         {% csrf_token %}
