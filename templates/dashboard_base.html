@@ -193,12 +193,18 @@
                                                                        href="#"><span
                                     class="d-none d-lg-inline mr-2 text-gray-600 small">{{ user.username }}</span><img
                                     class="border rounded-circle img-profile"
-                                    src="{% static 'images/base/avatars/avatar1.jpeg' %}"
+                                    {% if user.userprofile.user_profile_picture %}
+                                    src="{{ user.userprofile.user_profile_picture.url }}"
+                                    {% else %}
+                                    src="{% static 'images/main/ProfilePic/default.png' %}"
+                                    {% endif %}
+
                                     alt="Profile Pic"></a>
                                 <div
                                         class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu">
-{#                                    TODO: Convert this profile to main profile ! #}
-                                    <a class="dropdown-item" role="presentation" href="{% url 'shareManager:dashboard_profile' %}"><i
+                                    {#                                    TODO: Convert this profile to main profile ! #}
+                                    <a class="dropdown-item" role="presentation"
+                                       href="{% url 'shareManager:dashboard_profile' %}"><i
                                             class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Profile</a><a
                                         class="dropdown-item" role="presentation" href="#"><i
                                         class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Settings</a>

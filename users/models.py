@@ -26,6 +26,8 @@ class UserProfile(models.Model):
                                          help_text="Only Nepalese number available for now, Format: 98XXXXXXXX",
                                          max_length=10, validators=[MinLengthValidator(10)], unique=True)
 
+    profile_updated = models.BooleanField(default=False)
+
     @property
     def get_user_full_name(self):
         return self.user.get_full_name()
