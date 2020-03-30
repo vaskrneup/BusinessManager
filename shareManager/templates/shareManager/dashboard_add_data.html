@@ -1,0 +1,64 @@
+{% extends 'dashboard_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block body %}
+    <div class="col-lg-8" style="padding-left: 3%">
+        <div class="row mb-3">
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow">
+
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">Add Bought/Sold Share</p>
+                        </div>
+                        <div class="card-body">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    {{ add_share_data_form.share_company_name|as_crispy_field }}
+                                    {#                                    <label for="address"><strong>Address</strong></label><input#}
+                                    {#                                        class="form-control" type="text" placeholder="Sunset Blvd, 38"#}
+                                    {#                                        name="address">#}
+                                </div>
+                                <div class="form-group">
+                                    {{ add_share_data_form.share_company_buy_or_sell|as_crispy_field }}
+                                </div>
+                                <div class="form-row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            {{ add_share_data_form.share_company_bought_per_unit_price|as_crispy_field }}
+                                            {#                                            <label#}
+                                            {#                                                    for="city"><strong>City</strong></label><input class="form-control"#}
+                                            {#                                                                                                   type="text"#}
+                                            {#                                                                                                   placeholder="Los Angeles"#}
+                                            {#                                                                                                   name="city">#}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            {{ add_share_data_form.share_company_number_of_shares_bought|as_crispy_field }}
+                                            {#                                            <label#}
+                                            {#                                                for="country"><strong>Country</strong></label><input#}
+                                            {#                                                class="form-control" type="text" placeholder="USA" name="country">#}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    {{ add_share_data_form.share_company_bought_remarks|as_crispy_field }}
+                                    {#                                    <label for="address"><strong>Address</strong></label><input#}
+                                    {#                                        class="form-control" type="text" placeholder="Sunset Blvd, 38"#}
+                                    {#                                        name="address">#}
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-sm" type="submit">Save&nbsp;Settings</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

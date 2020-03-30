@@ -63,3 +63,21 @@ class ShareManagerUserDetails(models.Model):
     show_notification_popup = models.BooleanField(default=True)
     show_email_popup = models.BooleanField(default=True)
     keep_activity_log = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.share_email_1
+
+
+class ShareManagerUserShareValues(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    share_company_name = models.ForeignKey(ShareCompanyName, on_delete=models.CASCADE)
+
+    share_company_bought_per_unit_price = models.FloatField()
+    share_company_number_of_shares_bought = models.PositiveIntegerField()
+    share_company_bought_total_price = models.FloatField(blank=True)
+
+    share_company_bought_remarks = models.TextField(blank=True)
+    share_company_buy_or_sell = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"--{self.share_company_bought_remarks}"

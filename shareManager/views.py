@@ -7,6 +7,7 @@ import datetime
 # custom imports !
 from shareManager.extras import NepseAPI
 from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName
+from . import forms as share_forms
 from users import forms as user_forms
 
 
@@ -17,7 +18,7 @@ def update_database(request):
         raise Http404("Link not found !")
     """
     :param request: gets request while requesting a file !
-    :return: HTTPResponse for rendering as html in webpage !
+    :return: HTTPResponse for rendering as html in web page !
     """
     # create cache for doing fetching data later !
     aggregate_cache = ShareCompanyAggregate.objects.all().last()
@@ -173,3 +174,36 @@ def share_manager_dashboard_profile(request):
     }
 
     return render(request, template_name="shareManager/dashboard_profile.html", context=template_data)
+
+
+@login_required
+def add_share_data(request):
+    add_share_data_form = share_forms.AddShareDataForm(initial={"share_company_buy_or_sell": True})
+
+    if request.method == "POST":
+        if "share_company_number_of_shares_bought" in request.POST:
+            add_share_data_form = share_forms.AddShareDataForm(request.POST)
+
+            if add_share_data_form.is_valid():
+                x = add_share_data_form.save(commit=False)
+
+                if not x.share_company_buy_or_sell:
+                    x.share_company_bought_per_unit_price = (-x.share_company_bought_per_unit_price)
+
+                x.user = request.user
+                x.share_company_bought_total_price \
+                    = x.share_company_bought_per_unit_price * x.share_company_number_of_shares_bought
+                x.save()
+                if not x.share_company_buy_or_sell:
+                    messages.info(request, "Share saved as sell !")
+                else:
+                    messages.info(request, "Share saved as bought !")
+                redirect("shareManager:add_share_data")
+
+    template_data = {
+        "current": "add_data",
+        "current_for": "share",
+        "add_share_data_form": add_share_data_form,
+    }
+
+    return render(request, template_name="shareManager/dashboard_add_data.html", context=template_data)
