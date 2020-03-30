@@ -170,7 +170,6 @@ def share_manager_dashboard_profile(request):
         "user_profile_pic_update_form": user_profile_pic_update_form,
         "current": "profile",
         "current_for": "share",
-
     }
 
     return render(request, template_name="shareManager/dashboard_profile.html", context=template_data)

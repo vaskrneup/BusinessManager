@@ -136,6 +136,8 @@ class UserGlobalSettingsUpdateEmailForm(forms.ModelForm):
         if User.objects.filter(email=email).exists() and self.req_data.user.email != email:
             raise forms.ValidationError("Email Already in use !")
 
+        return email
+
 
 class UserGlobalSettingsUpdatePhoneNumberForm(forms.ModelForm):
     class Meta:

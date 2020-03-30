@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import UserProfile
+from .models import UserProfile, UserGlobalSettings
 
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -18,3 +18,4 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(UserGlobalSettings)

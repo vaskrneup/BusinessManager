@@ -14,6 +14,9 @@ class UserGlobalSettings(models.Model):
     user_city = models.CharField("city", max_length=256)
     user_country = models.CharField("country", max_length=128)
 
+    def __str__(self):
+        return self.user_address
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

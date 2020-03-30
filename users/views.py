@@ -180,9 +180,9 @@ def user_profile(request):
 
     # data is submitted to form !
     if request.method == "POST":
-        print(request.FILES)
-        print(request.POST)
+        # check if which form is submitted !
         if "user_identification_card_number" in request.POST:
+            # create empty forms !
             user_update_form = user_forms.UserUpdateSettingsForm(request.POST, instance=request.user)
             user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
                                                                                 instance=request.user.userprofile)
@@ -190,9 +190,9 @@ def user_profile(request):
             if user_update_form.is_valid() and user_profile_update_form.is_valid():
                 if request.user.userprofile.can_update_profile():
                     user_update_form.save()
-                    user_profile = user_profile_update_form.save(commit=False)
-                    user_profile.profile_updated = True
-                    user_profile.save()
+                    _user_profile = user_profile_update_form.save(commit=False)
+                    _user_profile.profile_updated = True
+                    _user_profile.save()
                     messages.info(request, "Your data is updated successfully !")
                 else:
                     messages.warning(request, "You have already updated profile once !")
@@ -201,6 +201,7 @@ def user_profile(request):
                 messages.info(request, "Please provide valid data !")
 
         elif "user_profile_picture" in request.FILES:
+            # create empty forms !
             user_profile_pic_update_form = user_forms.UserProfilePictureUpdateForm(request.POST, request.FILES,
                                                                                    instance=request.user.userprofile)
 
@@ -208,6 +209,7 @@ def user_profile(request):
                 user_profile_pic_update_form.save()
 
         elif "user_address" in request.POST:
+            # create empty forms !
             user_contact_details_update_form = user_forms.UserGlobalSettingsUpdateForm(
                 request.POST, instance=request.user.userglobalsettings
             )
@@ -236,5 +238,5 @@ def user_profile(request):
         "current": "profile",
         "current_for": "user",
     }
-    
+
     return render(request, template_name="users/dashboard_profile.html", context=template_data)

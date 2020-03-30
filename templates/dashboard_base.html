@@ -37,6 +37,10 @@
                         class="nav-link {% if current == 'profile' %}active{% endif %}"
                         href="{% if current_for == 'user' %}{% url 'users:user_profile' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_profile' %}{% endif %}"><i
                         class="fas fa-user"></i><span>{{ current_for|capfirst }} Profile</span></a></li>
+                <li class="nav-item" role="presentation"><a
+                        class="nav-link"
+                        href="{% if current_for == 'user' %}{% url 'shareManager:dashboard_home' %}{% elif current_for == 'share' %}{% url 'users:user_dashboard' %}{% endif %}"><i
+                        class="fas fa-tachometer-alt"></i><span></span>{% if current_for == 'user' %}Share Dashboard{% elif current_for == 'share' %}User Dashboard{% endif %}</a></li>
 
                 {% if user.is_superuser %}
                     <li class="nav-item" role="presentation"><a
