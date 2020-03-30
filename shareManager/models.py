@@ -73,7 +73,7 @@ class ShareManagerUserShareValues(models.Model):
     share_company_name = models.ForeignKey(ShareCompanyName, on_delete=models.CASCADE)
 
     share_company_bought_per_unit_price = models.FloatField()
-    share_company_number_of_shares_bought = models.PositiveIntegerField()
+    share_company_number_of_shares_bought = models.IntegerField()
     share_company_bought_total_price = models.FloatField(blank=True)
 
     share_company_bought_remarks = models.TextField(blank=True)
@@ -81,3 +81,13 @@ class ShareManagerUserShareValues(models.Model):
 
     def __str__(self):
         return f"--{self.share_company_bought_remarks}"
+
+
+class ShareManagerLedger(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    share_current_amount = models.FloatField(default=0)
+    share_current_length = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username}@{self.share_current_length}#{self.share_current_amount}"

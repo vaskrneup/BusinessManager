@@ -151,6 +151,7 @@ def share_manager_dashboard_profile(request):
                     user_profile = user_profile_update_form.save(commit=False)
                     user_profile.profile_updated = True
                     user_profile.save()
+
                     messages.info(request, "Your data is updated successfully !")
                 else:
                     messages.warning(request, "You have already updated profile once !")
@@ -185,6 +186,8 @@ def add_share_data(request):
             add_share_data_form = share_forms.AddShareDataForm(request.POST)
 
             if add_share_data_form.is_valid():
+                user = request.user
+
                 x = add_share_data_form.save(commit=False)
 
                 if not x.share_company_buy_or_sell:
@@ -193,12 +196,19 @@ def add_share_data(request):
                 x.user = request.user
                 x.share_company_bought_total_price \
                     = x.share_company_bought_per_unit_price * x.share_company_number_of_shares_bought
+                if not x.share_company_buy_or_sell:
+                    x.share_company_number_of_shares_bought = (-x.share_company_number_of_shares_bought)
                 x.save()
+
+                user.sharemanagerledger.share_current_amount += x.share_company_bought_total_price
+                user.sharemanagerledger.share_current_length += x.share_company_number_of_shares_bought
+                user.sharemanagerledger.save()
+
                 if not x.share_company_buy_or_sell:
                     messages.info(request, "Share saved as sell !")
                 else:
                     messages.info(request, "Share saved as bought !")
-                redirect("shareManager:add_share_data")
+                return redirect("shareManager:add_share_data")
 
     template_data = {
         "current": "add_data",
