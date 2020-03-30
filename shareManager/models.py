@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class ShareCompanyName(models.Model):
@@ -39,3 +40,26 @@ class ShareCompanyDetail(models.Model):
 
     def __str__(self):
         return str(self.company_transaction_date)
+
+
+# TODO !
+class ShareManagerUserDetails(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    share_phone_number_1 = models.CharField("Phone Number 1", max_length=15)
+    share_phone_number_2 = models.CharField("Phone Number 2", max_length=15)
+
+    share_email_1 = models.CharField("email 1", max_length=15)
+    share_email_2 = models.CharField("email 2", max_length=15)
+
+    Share_address = models.CharField("Address", max_length=512)
+    Share_city = models.CharField("city", max_length=256)
+    Share_country = models.CharField("country", max_length=128)
+
+    share_profile_picture = models.ImageField("Share Profile Picture", default="profilePicture/default.png",
+                                              upload_to="profilePicture")
+
+    share_dashboard_left_nav_show = models.BooleanField(default=True)
+    show_notification_popup = models.BooleanField(default=True)
+    show_email_popup = models.BooleanField(default=True)
+    keep_activity_log = models.BooleanField(default=True)

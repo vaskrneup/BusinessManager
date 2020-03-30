@@ -1,10 +1,9 @@
 # inbuilt imports !
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.models import User
 
 # custom imports !
-from .models import UserProfile
+from .models import UserProfile, UserGlobalSettings
 
 
 # For Local Form !
@@ -42,6 +41,8 @@ class UserRegisterForm(forms.ModelForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email already taken.")
 
+        return email
+
     def clean(self):
         # call main clean method !
         cleaned_data = super(UserRegisterForm, self).clean()
@@ -78,6 +79,7 @@ class UserUpdateSettingsForm(forms.ModelForm):
         super(UserUpdateSettingsForm, self).__init__(*args, **kwargs)
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
+        self.fields["username"].help_text = None
 
 
 # For updating UserProfile model data !
@@ -99,6 +101,43 @@ class UserProfileUpdateSettingsForm(forms.ModelForm):
 
 # for updating user profile picture !
 class UserProfilePictureUpdateForm(forms.ModelForm):
+    user_profile_picture = forms.ImageField(required=True)
+
     class Meta:
         model = UserProfile
         fields = ("user_profile_picture",)
+
+
+class UserGlobalSettingsUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserGlobalSettings
+        fields = ("user_address", "user_city", "user_country")
+
+
+class UserGlobalSettingsUpdateEmailForm(forms.ModelForm):
+    user_password = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), required=True)
+
+    class Meta:
+        model = User
+        fields = ("email",)
+
+    def __init__(self, *args, req_data: User, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.req_data = req_data
+
+        self.fields["email"].required = True
+
+    def clean_user_password(self):
+        if not self.req_data.user.check_password(self.cleaned_data['user_password']):
+            raise forms.ValidationError("Incorrect Password !")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if User.objects.filter(email=email).exists() and self.req_data.user.email != email:
+            raise forms.ValidationError("Email Already in use !")
+
+
+class UserGlobalSettingsUpdatePhoneNumberForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ("user_phone_number",)

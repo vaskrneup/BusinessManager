@@ -6,6 +6,15 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 
 
+# TODO !
+class UserGlobalSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    user_address = models.CharField("Address", max_length=512)
+    user_city = models.CharField("city", max_length=256)
+    user_country = models.CharField("country", max_length=128)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -20,13 +29,17 @@ class UserProfile(models.Model):
     user_date_of_birth = models.DateField('Date of Birth', blank=True, null=True)
 
     user_profile_picture = models.ImageField('User Passport Size Photo', upload_to="profilePicture",
-                                             blank=True, null=True)
+                                             blank=True, null=True, default="profilePicture/default.png")
 
     user_phone_number = models.CharField('Phone Number',
                                          help_text="Only Nepalese number available for now, Format: 98XXXXXXXX",
                                          max_length=10, validators=[MinLengthValidator(10)], unique=True)
 
     profile_updated = models.BooleanField(default=False)
+
+    def create_default_settings(self):
+        # create default user settings for this guy !
+        UserGlobalSettings(user=self.user).save()
 
     @property
     def get_user_full_name(self):

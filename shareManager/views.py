@@ -119,43 +119,58 @@ def share_manager_dashboard_home(request):
     # keeps track of data that is to be rendered in django templates !
     template_data = {
         # "title": "Dashboard",
-        "current": "sm_dashboard"
+        "current": "dashboard",
+        "current_for": "share",
     }
-    return render(request, template_name="shareManager/dashboard_home.html", context=template_data)
+    return render(request, template_name="users/dashboard_home.html", context=template_data)
 
 
 # TODO: Transfer this to UserDashboard !
 # for displaying user profile and their data !
 @login_required
 def share_manager_dashboard_profile(request):
+    # create forms with data pre filled !
+    # define at first because post have many forms !
+    user_update_form = user_forms.UserUpdateSettingsForm(instance=request.user)
+    user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(instance=request.user.userprofile)
+
+    # for updating profile picture !
+    user_profile_pic_update_form = user_forms.UserProfilePictureUpdateForm()
+
     # data is submitted to form !
     if request.method == "POST":
-        user_update_form = user_forms.UserUpdateSettingsForm(request.POST, instance=request.user)
-        user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
-                                                                            instance=request.user.userprofile)
+        if "user_identification_card_number" in request.POST:
+            user_update_form = user_forms.UserUpdateSettingsForm(request.POST, instance=request.user)
+            user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
+                                                                                instance=request.user.userprofile)
 
-        if user_update_form.is_valid() and user_profile_update_form.is_valid():
-            if request.user.userprofile.can_update_profile():
-                user_update_form.save()
-                user_profile = user_profile_update_form.save(commit=False)
-                user_profile.profile_updated = True
-                user_profile.save()
-                messages.info(request, "Your data is updated successfully !")
+            if user_update_form.is_valid() and user_profile_update_form.is_valid():
+                if request.user.userprofile.can_update_profile():
+                    user_update_form.save()
+                    user_profile = user_profile_update_form.save(commit=False)
+                    user_profile.profile_updated = True
+                    user_profile.save()
+                    messages.info(request, "Your data is updated successfully !")
+                else:
+                    messages.warning(request, "You have already updated profile once !")
+                return redirect("shareManager:dashboard_profile")
             else:
-                messages.warning(request, "You have already updated profile once !")
-            return redirect("shareManager:dashboard_profile")
-        else:
-            messages.info(request, "Please provide valid data !")
-    else:
-        # create forms with data pre filled !
-        user_update_form = user_forms.UserUpdateSettingsForm(instance=request.user)
-        user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(instance=request.user.userprofile)
+                messages.info(request, "Please provide valid data !")
+        elif "user_profile_picture" in request.FILES:
+            user_profile_pic_update_form = user_forms.UserProfilePictureUpdateForm(request.POST, request.FILES,
+                                                                                   instance=request.user.userprofile)
+
+            if user_profile_pic_update_form.is_valid():
+                user_profile_pic_update_form.save()
 
     # for rendering data !
     template_data = {
         "user_update_form": user_update_form,
         "user_profile_update_form": user_profile_update_form,
-        "current": "sm_profile",
+        "user_profile_pic_update_form": user_profile_pic_update_form,
+        "current": "profile",
+        "current_for": "share",
+
     }
 
     return render(request, template_name="shareManager/dashboard_profile.html", context=template_data)
