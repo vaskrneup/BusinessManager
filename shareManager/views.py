@@ -236,7 +236,7 @@ def user_share_ledger(request):
     else:
         num_of_data_to_show_per_page = 10
 
-    if len(filter_by_company_name) > 1:
+    if filter_by_company_name and len(filter_by_company_name) > 1:
         num_of_data_to_show_per_page = 10000
 
     if page:
@@ -250,7 +250,7 @@ def user_share_ledger(request):
     _user_share_values = ShareManagerUserShareValues.objects.filter(
         Q(share_company_name__company_full_name__contains=filter_by_company_name if filter_by_company_name else ""),
         user=request.user,
-    )
+    ).order_by("-share_bought_date")
 
     _user_share_values = _user_share_values.select_related("share_company_name")
 

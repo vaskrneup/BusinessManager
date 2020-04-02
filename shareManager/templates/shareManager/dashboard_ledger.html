@@ -73,7 +73,12 @@
                             <td>{{ user_share_value.share_company_bought_per_unit_price }}</td>
                             <td>{{ user_share_value.share_company_bought_total_price }}</td>
                             <td>{{ user_share_value.current_share_count_ledger }}</td>
-                            <td>{{ user_share_value.current_share_amount_ledger }}</td>
+                            {% if user_share_value.current_share_amount_ledger < 0 %}
+                                <td class="text-danger">{{ user_share_value.current_share_amount_ledger }}</td>
+                            {% else %}
+                                <td>{{ user_share_value.current_share_amount_ledger }}</td>
+
+                            {% endif %}
                             </tr>
                             {% endfor %}
                         {% else %}
