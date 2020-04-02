@@ -181,7 +181,7 @@ def share_manager_dashboard_profile(request):
 @login_required
 def add_share_data(request):
     # load form with initial value for buying !
-    add_share_data_form = share_forms.AddShareDataForm(initial={"share_company_buy_or_sell": True})
+    add_share_data_form = share_forms.AddShareDataForm(initial={"share_company_buy": True})
 
     if request.method == "POST":
         # check which form is submitted !
@@ -191,28 +191,18 @@ def add_share_data(request):
 
             # check if form is valid !
             if add_share_data_form.is_valid():
-                user = request.user
-
                 x = add_share_data_form.save(commit=False)
 
                 # if it is sell then !
                 if not x.share_company_buy_or_sell:
                     x.share_company_bought_per_unit_price = (-x.share_company_bought_per_unit_price)
+                    x.share_company_number_of_shares_bought = (-x.share_company_number_of_shares_bought)
 
                 x.user = request.user
-                # calculate total amount of bought or sold price ! !
-                x.share_company_bought_total_price \
-                    = x.share_company_bought_per_unit_price * x.share_company_number_of_shares_bought
 
-                # if it is sell then !
-                if not x.share_company_buy_or_sell:
-                    x.share_company_number_of_shares_bought = (-x.share_company_number_of_shares_bought)
+                # calculate values for ledger and total amt. !
+                x.update_ledger()
                 x.save()
-
-                # update the ledger !
-                user.sharemanagerledger.share_current_amount += x.share_company_bought_total_price
-                user.sharemanagerledger.share_current_length += x.share_company_number_of_shares_bought
-                user.sharemanagerledger.save()
 
                 if not x.share_company_buy_or_sell:
                     messages.info(request, "Share saved as sell !")

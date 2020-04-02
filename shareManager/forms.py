@@ -9,14 +9,14 @@ class AddShareDataForm(forms.ModelForm):
         fields = (
             "share_company_name", "share_company_bought_per_unit_price",
             "share_company_number_of_shares_bought", "share_company_bought_remarks",
-            "share_company_buy_or_sell"
+            "share_company_buy"
         )
         labels = {
             "share_company_name": "Company Name",
             "share_company_bought_per_unit_price": "Cost Per Unit Price",
             "share_company_number_of_shares_bought": "Number of Share",
             "share_company_bought_remarks": "Remarks",
-            "share_company_buy_or_sell": "TICK for buying, UN-TICK for selling"
+            "share_company_buy": "TICK for buying, UN-TICK for selling"
         }
 
     def clean_share_company_bought_per_unit_price(self):

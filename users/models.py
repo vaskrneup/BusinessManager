@@ -44,7 +44,6 @@ class UserProfile(models.Model):
     def create_default_settings(self):
         # create default user settings for this guy !
         UserGlobalSettings(user=self.user).save()
-        share_manager_models.ShareManagerLedger(user=self.user).save()
 
     @property
     def get_user_full_name(self):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (ShareCompanyName, ShareCompanyDetail, ShareCompanyAggregate, ShareManagerUserShareValues,
-                     ShareManagerUserDetails, ShareManagerLedger)
+                     ShareManagerUserDetails)
 
 
 class ShareCompanyNameAdmin(admin.ModelAdmin):
@@ -21,4 +21,3 @@ admin.site.register(ShareCompanyDetail, ShareCompanyDetailAdmin)
 admin.site.register(ShareCompanyAggregate, ShareCompanyAggregateAdmin)
 admin.site.register(ShareManagerUserShareValues)
 admin.site.register(ShareManagerUserDetails)
-admin.site.register(ShareManagerLedger)

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 from django.utils import timezone
 
 
@@ -74,14 +73,35 @@ class ShareManagerUserShareValues(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     share_company_name = models.ForeignKey(ShareCompanyName, on_delete=models.CASCADE)
 
-    bought_per_unit_price = models.DateTimeField(default=timezone.datetime.now())
+    share_bought_date = models.DateTimeField("Share Bought Date", default=timezone.datetime.now)
 
-    share_company_bought_per_unit_price = models.FloatField()
-    share_company_number_of_shares_bought = models.IntegerField()
-    share_company_bought_total_price = models.FloatField(blank=True)
+    share_company_bought_per_unit_price = models.FloatField("Share Per Unit Price")
+    share_company_number_of_shares_bought = models.IntegerField("Number of share Bought")
+    share_company_bought_total_price = models.FloatField("Total Amount", blank=True)
+
+    current_share_count_ledger = models.IntegerField(default=0)
+    current_share_amount_ledger = models.FloatField(default=0.0)
 
     share_company_bought_remarks = models.TextField(blank=True)
-    share_company_buy_or_sell = models.BooleanField(default=True)
+    share_company_buy = models.BooleanField(default=True)
+
+    # calculate values for other columns !
+    def update_ledger(self):
+        # gets value of ledger for last transaction !
+        last_transaction = self.objects.filter(user=self.user).last()
+
+        if self.share_company_buy:
+            self.share_company_bought_total_price \
+                = self.share_company_bought_per_unit_price * self.share_company_number_of_shares_bought
+        else:
+            self.share_company_bought_total_price \
+                = -(self.share_company_bought_per_unit_price * self.share_company_number_of_shares_bought)
+
+        self.current_share_amount_ledger = \
+            last_transaction.current_share_amount_ledger + self.share_company_bought_total_price
+
+        self.current_share_count_ledger = \
+            last_transaction.current_share_count_ledger + self.share_company_number_of_shares_bought
 
     def __str__(self):
         return f"--{self.share_company_bought_remarks}"
