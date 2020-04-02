@@ -86,9 +86,9 @@ class ShareManagerUserShareValues(models.Model):
     share_company_buy = models.BooleanField(default=True)
 
     # calculate values for other columns !
-    def update_ledger(self):
+    def update_ledger(self, instance=None):
         # gets value of ledger for last transaction !
-        last_transaction = self.objects.filter(user=self.user).last()
+        last_transaction = instance
 
         if self.share_company_buy:
             self.share_company_bought_total_price \
@@ -97,11 +97,12 @@ class ShareManagerUserShareValues(models.Model):
             self.share_company_bought_total_price \
                 = -(self.share_company_bought_per_unit_price * self.share_company_number_of_shares_bought)
 
-        self.current_share_amount_ledger = \
-            last_transaction.current_share_amount_ledger + self.share_company_bought_total_price
+        if last_transaction:
+            self.current_share_amount_ledger = \
+                last_transaction.current_share_amount_ledger + self.share_company_bought_total_price
 
-        self.current_share_count_ledger = \
-            last_transaction.current_share_count_ledger + self.share_company_number_of_shares_bought
+            self.current_share_count_ledger = \
+                last_transaction.current_share_count_ledger + self.share_company_number_of_shares_bought
 
     def __str__(self):
         return f"--{self.share_company_bought_remarks}"

@@ -131,4 +131,4 @@ LOGIN_URL = "/user/login/"
 SESSION_COOKIE_HTTPONLY = True  # to prevent js from accessing cookie data !
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 60 * 60
+# SESSION_COOKIE_AGE = 60 * 60

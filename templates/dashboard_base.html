@@ -34,11 +34,13 @@
                         href="
 
 
+
                                 {% if current_for == 'user' %}{% url 'users:user_dashboard' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_home' %}{% endif %}"><i
                         class="fas fa-tachometer-alt"></i><span>{{ current_for|capfirst }} Dashboard</span></a></li>
                 <li class="nav-item" role="presentation"><a
                         class="nav-link {% if current == 'profile' %}active{% endif %}"
                         href="
+
 
                                 {% if current_for == 'user' %}{% url 'users:user_profile' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_profile' %}{% endif %}"><i
                         class="fas fa-user"></i><span>{{ current_for|capfirst }} Profile</span></a></li>
@@ -49,14 +51,15 @@
                             href="{% url 'shareManager:add_share_data' %}"><i
                             class="fas fa-user"></i><span>Add Share Data</span></a></li>
                     <li class="nav-item" role="presentation"><a
-                            class="nav-link {% if current == 'add_data' %}active{% endif %}"
-                            href="#"><i
+                            class="nav-link {% if current == 'share_ledger' %}active{% endif %}"
+                            href="{% url 'shareManager:show_share_ledger' %}"><i
                             class="fas fa-user"></i><span>Ledger</span></a></li>
                 {% endif %}
 
                 <li class="nav-item" role="presentation"><a
                         class="nav-link"
                         href="
+
 
 
                                 {% if current_for == 'user' %}{% url 'shareManager:dashboard_home' %}{% elif current_for == 'share' %}{% url 'users:user_dashboard' %}{% endif %}"><i

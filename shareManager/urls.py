@@ -14,6 +14,7 @@ urlpatterns = [
     path("dashboard/", share_manager_views.share_manager_dashboard_home, name="dashboard_home"),
     path("profile/", share_manager_views.share_manager_dashboard_profile, name="dashboard_profile"),
     path("add-share-data/", share_manager_views.add_share_data, name="add_share_data"),
+    path("share-transaction-ledger/", share_manager_views.user_share_ledger, name="show_share_ledger"),
 
     # rendering for unauthenticated users !
 

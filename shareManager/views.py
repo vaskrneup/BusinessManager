@@ -6,7 +6,7 @@ import datetime
 
 # custom imports !
 from shareManager.extras import NepseAPI
-from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName
+from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName, ShareManagerUserShareValues
 from . import forms as share_forms
 from users import forms as user_forms
 
@@ -194,17 +194,17 @@ def add_share_data(request):
                 x = add_share_data_form.save(commit=False)
 
                 # if it is sell then !
-                if not x.share_company_buy_or_sell:
+                if not x.share_company_buy:
                     x.share_company_bought_per_unit_price = (-x.share_company_bought_per_unit_price)
                     x.share_company_number_of_shares_bought = (-x.share_company_number_of_shares_bought)
 
                 x.user = request.user
 
                 # calculate values for ledger and total amt. !
-                x.update_ledger()
+                x.update_ledger(ShareManagerUserShareValues.objects.filter(user=request.user).last())
                 x.save()
 
-                if not x.share_company_buy_or_sell:
+                if not x.share_company_buy:
                     messages.info(request, "Share saved as sell !")
                 else:
                     messages.info(request, "Share saved as bought !")
@@ -221,4 +221,17 @@ def add_share_data(request):
 
 @login_required
 def user_share_ledger(request):
-    pass
+    print(request.GET)
+    num = request.GET.get("number_of_data_to_show")
+
+    user_share_values = ShareManagerUserShareValues.objects.filter(
+        user=request.user
+    ).select_related("share_company_name")
+
+    template_data = {
+        "current": "share_ledger",
+        "current_for": "share",
+        "user_share_values": user_share_values,
+    }
+
+    return render(request, template_name="shareManager/dashboard_ledger.html", context=template_data)
