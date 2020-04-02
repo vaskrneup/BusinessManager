@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
 import datetime
 
 # custom imports !
@@ -221,14 +223,44 @@ def add_share_data(request):
 
 @login_required
 def user_share_ledger(request):
-    print(request.GET)
-    num = request.GET.get("number_of_data_to_show")
+    num_of_data_to_show_per_page = request.POST.get("number_of_data_to_show")
+    page = request.GET.get("page")
+    filter_by_company_name = request.POST.get("search_by_company_name")
+    filter_by_date = request.POST.get("search_by_date")
 
-    user_share_values = ShareManagerUserShareValues.objects.filter(
-        user=request.user
-    ).select_related("share_company_name")
+    if num_of_data_to_show_per_page:
+        try:
+            num_of_data_to_show_per_page = int(num_of_data_to_show_per_page)
+        except ValueError:
+            num_of_data_to_show_per_page = 10
+    else:
+        num_of_data_to_show_per_page = 10
+
+    if len(filter_by_company_name) > 1:
+        num_of_data_to_show_per_page = 10000
+
+    if page:
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+    else:
+        page = 1
+
+    _user_share_values = ShareManagerUserShareValues.objects.filter(
+        Q(share_company_name__company_full_name__contains=filter_by_company_name if filter_by_company_name else ""),
+        user=request.user,
+    )
+
+    _user_share_values = _user_share_values.select_related("share_company_name")
+
+    user_share_values_paginator = Paginator(_user_share_values, num_of_data_to_show_per_page)
+
+    user_share_values = user_share_values_paginator.get_page(page)
 
     template_data = {
+        "current_page": page,
+        "paginator": user_share_values_paginator,
         "current": "share_ledger",
         "current_for": "share",
         "user_share_values": user_share_values,
