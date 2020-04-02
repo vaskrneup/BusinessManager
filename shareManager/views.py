@@ -227,3 +227,8 @@ def add_share_data(request):
     }
 
     return render(request, template_name="shareManager/dashboard_add_data.html", context=template_data)
+
+
+@login_required
+def user_share_ledger(request):
+    pass

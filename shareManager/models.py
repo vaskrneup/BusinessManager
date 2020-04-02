@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.utils import timezone
+
 
 class ShareCompanyName(models.Model):
     company_full_name = models.CharField("Full Name", max_length=256, null=False, blank=False, unique=True)
@@ -71,6 +73,8 @@ class ShareManagerUserDetails(models.Model):
 class ShareManagerUserShareValues(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     share_company_name = models.ForeignKey(ShareCompanyName, on_delete=models.CASCADE)
+
+    bought_per_unit_price = models.DateTimeField(default=timezone.datetime.now())
 
     share_company_bought_per_unit_price = models.FloatField()
     share_company_number_of_shares_bought = models.IntegerField()
