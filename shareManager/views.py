@@ -259,6 +259,7 @@ def user_share_ledger(request):
     user_share_values = user_share_values_paginator.get_page(page)
 
     template_data = {
+        "num_of_data_to_show_per_page": len(user_share_values),
         "current_page": page,
         "paginator": user_share_values_paginator,
         "current": "share_ledger",

@@ -4,6 +4,12 @@ from . import models as share_manager_models
 
 
 class AddShareDataForm(forms.ModelForm):
+    share_company_name = forms.ModelChoiceField(
+        queryset=share_manager_models.ShareCompanyName.objects.order_by(
+            'company_full_name'
+        )
+    )
+
     class Meta:
         model = share_manager_models.ShareManagerUserShareValues
         fields = (
