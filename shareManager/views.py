@@ -303,15 +303,7 @@ def share_price_history_graphical_view(request):
     cache = ShareCompanyAggregate.objects.all()
 
     date = cache.last().total_transaction_date
-    data_for = "Total Transaction Per Day"
-
-    if request.method == "POST":
-        try:
-            # _date = request.POST.get("share_data_date")
-            # date = parser(_date)
-            data_for = request.POST.get("data_for")
-        except:
-            pass
+    data_for = "Total Amount"
 
     # share_company_detail = cache.filter(company_transaction_date=date).select_related("company_name")
 
@@ -327,12 +319,20 @@ def share_price_history_graphical_view(request):
         {
             "name": "Amount",
             "type": "number"
+        },
+        {
+            "name": "Quantity",
+            "type": "number"
+        },
+        {
+            "name": "No. of Transactions",
+            "type": "number"
         }
     ]
 
     if share_company_detail:
         for d in share_company_detail:
-            data.append([str(d.total_transaction_date), float(d.total_amount)])
+            data.append([str(d.total_transaction_date), d.total_amount, d.total_quantity, d.total_num_of_transactions])
 
         fusion_table = FusionTable(schema, data)
         time_series = TimeSeries(fusion_table)
@@ -346,16 +346,8 @@ def share_price_history_graphical_view(request):
                                                 text: '{data_for}'
                                             }}""")
 
-        # time_series.AddAttribute("yAxis", """[{
-        #                                             plot: {
-        #                                             value: 'Total Amount',
-        #                                             type: 'number'
-        #                                             },
-        #                                         title: 'Daily Visitors (in thousand)'
-        #                                     }]""")
-
         # Create an object for the chart using the FusionCharts class constructor
-        output = FusionCharts("timeseries", "ex1", "100%", "100%", "chart-1", "json", time_series).render()
+        output = FusionCharts("timeseries", "ex1", "100%", 600, "chart-1", "json", time_series).render()
     else:
         output = None
 
@@ -365,6 +357,7 @@ def share_price_history_graphical_view(request):
         "share_company_details": share_company_detail,
         "company_info_chart": 0,
         "output": output,
+        "data_for": data_for,
     }
 
     return render(request, template_name="shareManager/dashboard_company_detail_graphical.html", context=template_data)
