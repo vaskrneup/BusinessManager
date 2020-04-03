@@ -6,8 +6,9 @@
         {#        <h3 class="text-dark mb-4">Team</h3>#}
         <div class="card shadow">
             <div class="card-header py-3">
-                <p class="text-primary m-0 font-weight-bold">Share Data for date: {{ date }} <a href="#" class="float-right text-info">Show Graphical
-                    View</a>
+                <p class="text-primary m-0 font-weight-bold">Share Data for date: {{ date }}
+                    <a href="{% url 'shareManager:show_share_history_graphical_view' %}" class="float-right text-info">
+                        Show Graphical View</a>
                 </p>
             </div>
             <div class="card-body">
@@ -108,7 +109,7 @@
                 <div class="row">
                     <div class="col-md-6 align-self-center">
                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
-                            <a href="#">Show Graphical View</a>
+                            <a href="{% url 'shareManager:show_share_history_graphical_view' %}">Show Graphical View</a>
                         </p>
                     </div>
                 </div>

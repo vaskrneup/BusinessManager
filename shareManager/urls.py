@@ -16,6 +16,8 @@ urlpatterns = [
     path("add-share-data/", share_manager_views.add_share_data, name="add_share_data"),
     path("share-transaction-ledger/", share_manager_views.user_share_ledger, name="show_share_ledger"),
     path("share-price-history/", share_manager_views.share_price_history, name="show_share_history"),
+    path("share-price-history-graphical-view/", share_manager_views.share_price_history_graphical_view,
+         name="show_share_history_graphical_view"),
 
     # rendering for unauthenticated users !
 

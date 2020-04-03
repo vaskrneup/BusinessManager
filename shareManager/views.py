@@ -5,7 +5,13 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 import datetime
-import dateutil
+from dateutil.parser import parser
+
+# Include the `fusioncharts.py` file which has required functions to embed the charts in html page
+from .fusioncharts import FusionCharts
+from .fusioncharts import FusionTable
+from .fusioncharts import TimeSeries
+import requests
 
 # custom imports !
 from shareManager.extras import NepseAPI
@@ -291,3 +297,74 @@ def share_price_history(request):
     }
 
     return render(request, template_name="shareManager/dashboard_company_detail.html", context=template_data)
+
+
+def share_price_history_graphical_view(request):
+    cache = ShareCompanyAggregate.objects.all()
+
+    date = cache.last().total_transaction_date
+    data_for = "Total Transaction Per Day"
+
+    if request.method == "POST":
+        try:
+            # _date = request.POST.get("share_data_date")
+            # date = parser(_date)
+            data_for = request.POST.get("data_for")
+        except:
+            pass
+
+    # share_company_detail = cache.filter(company_transaction_date=date).select_related("company_name")
+
+    share_company_detail = cache
+
+    data = []
+    schema = [
+        {
+            "name": "Time",
+            "type": "date",
+            "format": "%Y-%m-%d"
+        },
+        {
+            "name": "Amount",
+            "type": "number"
+        }
+    ]
+
+    if share_company_detail:
+        for d in share_company_detail:
+            data.append([str(d.total_transaction_date), float(d.total_amount)])
+
+        fusion_table = FusionTable(schema, data)
+        time_series = TimeSeries(fusion_table)
+
+        time_series.AddAttribute("chart",
+                                 """{
+                                    showLegend: 0
+                            }""")
+
+        time_series.AddAttribute("caption", f"""{{
+                                                text: '{data_for}'
+                                            }}""")
+
+        # time_series.AddAttribute("yAxis", """[{
+        #                                             plot: {
+        #                                             value: 'Total Amount',
+        #                                             type: 'number'
+        #                                             },
+        #                                         title: 'Daily Visitors (in thousand)'
+        #                                     }]""")
+
+        # Create an object for the chart using the FusionCharts class constructor
+        output = FusionCharts("timeseries", "ex1", "100%", "100%", "chart-1", "json", time_series).render()
+    else:
+        output = None
+
+    template_data = {
+        "current": "company_detail",
+        "current_for": "share",
+        "share_company_details": share_company_detail,
+        "company_info_chart": 0,
+        "output": output,
+    }
+
+    return render(request, template_name="shareManager/dashboard_company_detail_graphical.html", context=template_data)
