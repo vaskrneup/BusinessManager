@@ -5,10 +5,13 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 import datetime
+import dateutil
 
 # custom imports !
 from shareManager.extras import NepseAPI
-from .models import ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName, ShareManagerUserShareValues
+from .models import (
+    ShareCompanyDetail, ShareCompanyAggregate, ShareCompanyName, ShareManagerUserShareValues,
+)
 from . import forms as share_forms
 from users import forms as user_forms
 
@@ -226,15 +229,15 @@ def user_share_ledger(request):
     num_of_data_to_show_per_page = request.POST.get("number_of_data_to_show")
     page = request.GET.get("page")
     filter_by_company_name = request.POST.get("search_by_company_name")
-    filter_by_date = request.POST.get("search_by_date")
+    # filter_by_date = request.POST.get("search_by_date")
 
     if num_of_data_to_show_per_page:
         try:
             num_of_data_to_show_per_page = int(num_of_data_to_show_per_page)
         except ValueError:
-            num_of_data_to_show_per_page = 10
+            num_of_data_to_show_per_page = 25
     else:
-        num_of_data_to_show_per_page = 10
+        num_of_data_to_show_per_page = 25
 
     if filter_by_company_name and len(filter_by_company_name) > 1:
         num_of_data_to_show_per_page = 10000
@@ -268,3 +271,23 @@ def user_share_ledger(request):
     }
 
     return render(request, template_name="shareManager/dashboard_ledger.html", context=template_data)
+
+
+def share_price_history(request):
+    cache = ShareCompanyDetail.objects.all()
+
+    if request.method == "POST":
+        date = request.POST.get("share_data_date")
+    else:
+        date = cache.last().company_transaction_date
+
+    share_company_detail = cache.filter(company_transaction_date=date).select_related("company_name")
+
+    template_data = {
+        "current": "company_detail",
+        "current_for": "share",
+        "share_company_details": share_company_detail,
+        "date": str(date)
+    }
+
+    return render(request, template_name="shareManager/dashboard_company_detail.html", context=template_data)

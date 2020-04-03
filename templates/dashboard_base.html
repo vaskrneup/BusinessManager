@@ -35,25 +35,50 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
                                 {% if current_for == 'user' %}{% url 'users:user_dashboard' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_home' %}{% endif %}"><i
                         class="fas fa-tachometer-alt"></i><span>{{ current_for|capfirst }} Dashboard</span></a></li>
                 <li class="nav-item" role="presentation"><a
                         class="nav-link {% if current == 'profile' %}active{% endif %}"
                         href="
-
-
-                                {% if current_for == 'user' %}{% url 'users:user_profile' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_profile' %}{% endif %}"><i
-                        class="fas fa-user"></i><span>{{ current_for|capfirst }} Profile</span></a></li>
+{% if current_for == 'user' %}
+{% url 'users:user_profile' %}
+{% elif current_for == 'share' %}
+{% url 'shareManager:dashboard_profile' %}
+{% endif %}">
+                    <i class="fas fa-user"></i><span>{{ current_for|capfirst }} Profile</span></a></li>
 
                 {% if current_for == "share" %}
                     <li class="nav-item" role="presentation"><a
                             class="nav-link {% if current == 'add_data' %}active{% endif %}"
                             href="{% url 'shareManager:add_share_data' %}"><i
-                            class="fas fa-user"></i><span>Add Share Data</span></a></li>
-                    <li class="nav-item" role="presentation"><a
-                            class="nav-link {% if current == 'share_ledger' %}active{% endif %}"
-                            href="{% url 'shareManager:show_share_ledger' %}"><i
-                            class="fas fa-user"></i><span>Ledger</span></a></li>
+                            class="fas fa-user"></i><span>Add Share Data</span></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {% if current == 'share_ledger' %}active{% endif %}"
+                           href="{% url 'shareManager:show_share_ledger' %}">
+                            <i class="fas fa-user"> </i>
+                            <span>Ledger</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {% if current == 'company_detail' %}active{% endif %}"
+                           href="{% url 'shareManager:show_share_history' %}">
+                            <i class="fas fa-user"></i>
+                            <span>Share Price</span>
+                        </a>
+                    </li>
                 {% endif %}
 
                 <li class="nav-item" role="presentation"><a
@@ -62,15 +87,26 @@
 
 
 
-                                {% if current_for == 'user' %}{% url 'shareManager:dashboard_home' %}{% elif current_for == 'share' %}{% url 'users:user_dashboard' %}{% endif %}"><i
-                        class="fas fa-tachometer-alt"></i><span></span>{% if current_for == 'user' %}Share
+
+
+
+
+
+
+
+                                {% if current_for == 'user' %}{% url 'shareManager:dashboard_home' %}{% elif current_for == 'share' %}{% url 'users:user_dashboard' %}{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i><span></span>{% if current_for == 'user' %}Share
                     Dashboard{% elif current_for == 'share' %}User Dashboard{% endif %}</a></li>
 
                 {% if user.is_superuser %}
-                    <li class="nav-item" role="presentation"><a
-                            class="nav-link"
-                            href="{% url 'shareManager:update_database' %}"><i
-                            class="fas fa-user"></i><span>Update sm_db</span></a></li>
+                    <li class="nav-item" role="presentation">
+                        <a
+                                class="nav-link"
+                                href="{% url 'shareManager:update_database' %}">
+                            <i class="fas fa-user"></i>
+                            <span>Update sm_db</span>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
             <div class="text-center d-none d-md-inline">

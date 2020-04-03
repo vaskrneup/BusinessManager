@@ -63,7 +63,7 @@ def user_login(request):
         messages.info(request, "You need to logout before logging in to another account !")
         # TODO: Change this to other dashboard !
         # redirect to main dashboard !
-        return redirect('shareManager:dashboard_home')
+        return redirect('users:user_dashboard')
 
     # check if request is post or not !
     if request.method == "POST":
