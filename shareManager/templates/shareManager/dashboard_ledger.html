@@ -1,4 +1,5 @@
 {% extends 'dashboard_base.html' %}
+{% load share_template_tags %}
 
 {% block body %}
 
@@ -35,9 +36,9 @@
                                            placeholder="Company Name">
                                 </label>
 
-{#                                <label>#}
-{#                                    <input name="search_by_date" class="form-control form-control-sm" type="date">#}
-{#                                </label>#}
+                                {#                                <label>#}
+                                {#                                    <input name="search_by_date" class="form-control form-control-sm" type="date">#}
+                                {#                                </label>#}
 
                                 <input type="submit" class="btn-sm btn-primary" value="Filter">
                             </div>
@@ -55,6 +56,7 @@
                             <th>Per Unit Price</th>
                             <th>Total Amt.</th>
                             <th>Current Shares</th>
+                            {#                            <th>Bought Price</th>#}
                             <th>Current Amt.</th>
                         </tr>
                         </thead>
@@ -74,18 +76,18 @@
                             <td>{{ user_share_value.share_company_bought_per_unit_price }}</td>
                             <td>{{ user_share_value.share_company_bought_total_price }}</td>
                             <td>{{ user_share_value.current_share_count_ledger }}</td>
-                            {% if user_share_value.current_share_amount_ledger < 0 %}
-                                <td class="text-danger">{{ user_share_value.current_share_amount_ledger }}</td>
-                            {% else %}
-                                <td>{{ user_share_value.current_share_amount_ledger }}</td>
+                            {#                            {% if user_share_value.current_share_amount_ledger < 0 %}#}
+                            {#                                <td class="text-danger">{{ user_share_value.current_share_amount_ledger }}</td>#}
+                            {#                            {% else %}#}
+                            {#                                <td>{{ user_share_value.current_share_amount_ledger }}</td>#}
+                            {#                            {% endif %}#}
+                            <td>{{ user_share_value|get_current_price_filter:company_details_cache }}</td>
 
-                            {% endif %}
                             </tr>
                             {% endfor %}
                         {% else %}
                             <h3>No data found !</h3>
                         {% endif %}
-
 
                         </tbody>
                         <tfoot>
@@ -97,6 +99,7 @@
                             <th>Per Unit Price</th>
                             <th>Total Amt.</th>
                             <th>Current Shares</th>
+                            {#                            <th>Bought Price</th>#}
                             <th>Current Amt.</th>
                         </tr>
                         </tfoot>

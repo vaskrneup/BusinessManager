@@ -104,5 +104,11 @@ class ShareManagerUserShareValues(models.Model):
             self.current_share_count_ledger = \
                 last_transaction.current_share_count_ledger + self.share_company_number_of_shares_bought
 
+    def get_current_price(self, query_cache=None):
+        if query_cache:
+            return query_cache.company_closing_price * self.share_company_number_of_shares_bought
+        else:
+            return self.share_company_number_of_shares_bought * 100
+
     def __str__(self):
         return f"--{self.share_company_bought_remarks}"

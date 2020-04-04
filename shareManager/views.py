@@ -149,6 +149,8 @@ def share_manager_dashboard_profile(request):
     # for updating profile picture !
     user_profile_pic_update_form = user_forms.UserProfilePictureUpdateForm()
 
+    # for providing today's value !
+
     # data is submitted to form !
     if request.method == "POST":
         if "user_identification_card_number" in request.POST:
@@ -267,7 +269,10 @@ def user_share_ledger(request):
 
     user_share_values = user_share_values_paginator.get_page(page)
 
+    company_details_cache = ShareCompanyDetail.objects.all().last()
+
     template_data = {
+        "company_details_cache": company_details_cache,
         "num_of_data_to_show_per_page": len(user_share_values),
         "current_page": page,
         "paginator": user_share_values_paginator,
