@@ -105,8 +105,9 @@ class ShareManagerUserShareValues(models.Model):
                 last_transaction.current_share_count_ledger + self.share_company_number_of_shares_bought
 
     def get_current_price(self, query_cache=None):
-        if query_cache:
-            return query_cache.company_closing_price * self.share_company_number_of_shares_bought
+        cache = query_cache.filter(company_name=self.share_company_name).last()
+        if cache:
+            return cache.company_closing_price * self.share_company_number_of_shares_bought
         else:
             return self.share_company_number_of_shares_bought * 100
 

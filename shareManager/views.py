@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
@@ -259,7 +261,7 @@ def user_share_ledger(request):
         page = 1
 
     _user_share_values = ShareManagerUserShareValues.objects.filter(
-        Q(share_company_name__company_full_name__contains=filter_by_company_name if filter_by_company_name else ""),
+        share_company_name__company_full_name__contains=filter_by_company_name if filter_by_company_name else "",
         user=request.user,
     ).order_by("-share_bought_date")
 
@@ -269,7 +271,7 @@ def user_share_ledger(request):
 
     user_share_values = user_share_values_paginator.get_page(page)
 
-    company_details_cache = ShareCompanyDetail.objects.all().last()
+    company_details_cache = ShareCompanyDetail.objects.all()
 
     template_data = {
         "company_details_cache": company_details_cache,
@@ -287,12 +289,19 @@ def user_share_ledger(request):
 def share_price_history(request):
     cache = ShareCompanyDetail.objects.all()
 
-    if request.method == "POST":
-        date = request.POST.get("share_data_date")
-    else:
-        date = cache.last().company_transaction_date
+    cache = cache.select_related("company_name")
+    date = cache.last().company_transaction_date
 
-    share_company_detail = cache.filter(company_transaction_date=date).select_related("company_name")
+    if request.method == "POST":
+        _company_name = request.POST.get("search_by_company_name")
+        _date = request.POST.get("share_data_date")
+
+        if _company_name:
+            cache = cache.filter(company_name__company_full_name__contains=_company_name)
+        if _date:
+            date = _date
+
+    share_company_detail = cache.filter(company_transaction_date=date)
 
     template_data = {
         "current": "company_detail",
@@ -307,7 +316,7 @@ def share_price_history(request):
 def share_price_history_graphical_view(request):
     cache = ShareCompanyAggregate.objects.all()
 
-    date = cache.last().total_transaction_date
+    # date = cache.last().total_transaction_date
     data_for = "Total Amount"
 
     # share_company_detail = cache.filter(company_transaction_date=date).select_related("company_name")
