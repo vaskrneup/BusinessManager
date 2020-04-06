@@ -1,19 +1,14 @@
-from collections import OrderedDict
-
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
 import datetime
-from dateutil.parser import parser
 
 # Include the `fusioncharts.py` file which has required functions to embed the charts in html page
 from .fusioncharts import FusionCharts
 from .fusioncharts import FusionTable
 from .fusioncharts import TimeSeries
-import requests
 
 # custom imports !
 from shareManager.extras import NepseAPI
@@ -131,12 +126,50 @@ def update_database(request):
 @login_required
 def share_manager_dashboard_home(request):
     # keeps track of data that is to be rendered in django templates !
+    date_label = []
+    share_count_value = []
+    share_amt_value = []
+    data_label = []
+
+    user_share_data_cache = ShareManagerUserShareValues.objects.all()
+
+    user_share_data = user_share_data_cache.filter(user=request.user)
+
+    for data in user_share_data:
+        data_label.append([str(data.share_bought_date.date()), float(data.current_share_count_ledger)])
+        date_label.append({"label": str(data.share_bought_date.date().strftime("%b %d %y"))})
+        share_count_value.append({"value": float(data.current_share_count_ledger)})
+        share_amt_value.append({"value": float(data.current_share_amount_ledger)})
+
+    data_source = {
+        "chart": {
+            "theme": "fusion",
+            "caption": "Share Trends",
+            # "subCaption": "(2016 to 2017)",
+            "xAxisName": "Month",
+            "yAxisName": "Revenue",
+            "numberPrefix": "",
+            "lineThickness": "3",
+            "flatScrollBars": "1",
+            "scrollheight": "10",
+            "numVisiblePlot": "12",
+            "showHoverEffect": "1"
+        },
+        "categories": [{
+            "category": date_label
+        }],
+        "dataset": [{
+            "data": share_count_value
+        }]
+    }
     template_data = {
         # "title": "Dashboard",
+        "data_source": data_source,
+        "data_label": data_label,
         "current": "dashboard",
         "current_for": "share",
     }
-    return render(request, template_name="users/dashboard_home.html", context=template_data)
+    return render(request, template_name="shareManager/dashboard_home.html", context=template_data)
 
 
 # TODO: Transfer this to UserDashboard !
@@ -324,53 +357,17 @@ def share_price_history_graphical_view(request):
     share_company_detail = cache
 
     data = []
-    schema = [
-        {
-            "name": "Time",
-            "type": "date",
-            "format": "%Y-%m-%d"
-        },
-        {
-            "name": "Amount",
-            "type": "number"
-        },
-        {
-            "name": "Quantity",
-            "type": "number"
-        },
-        {
-            "name": "No. of Transactions",
-            "type": "number"
-        }
-    ]
 
     if share_company_detail:
         for d in share_company_detail:
             data.append([str(d.total_transaction_date), d.total_amount, d.total_quantity, d.total_num_of_transactions])
 
-        fusion_table = FusionTable(schema, data)
-        time_series = TimeSeries(fusion_table)
-
-        time_series.AddAttribute("chart",
-                                 """{
-                                    showLegend: 0
-                            }""")
-
-        time_series.AddAttribute("caption", f"""{{
-                                                text: '{data_for}'
-                                            }}""")
-
-        # Create an object for the chart using the FusionCharts class constructor
-        output = FusionCharts("timeseries", "ex1", "100%", 600, "chart-1", "json", time_series).render()
-    else:
-        output = None
-
     template_data = {
+        "share_data": data,
         "current": "company_detail",
         "current_for": "share",
         "share_company_details": share_company_detail,
         "company_info_chart": 0,
-        "output": output,
         "data_for": data_for,
     }
 

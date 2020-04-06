@@ -4,17 +4,90 @@
 {% block body %}
     <div class="container-fluid">
         {#        <h3 class="text-dark mb-4">Team</h3>#}
-        <div class="card shadow" style="height: 700px">
+        <div class="card shadow">
             <div class="card-header py-3">
-                <p class="text-primary m-0 font-weight-bold">Share Data for "{{ data_for }}"
+                <p class="text-primary m-0 font-weight-bold">{{ data_for }}
                     <a href="{% url 'shareManager:show_share_history' %}" class="float-right text-info">
                         Show Tabular View</a>
                 </p>
             </div>
-            <div class="card-body" id="haha">
-                <div class="chart-area" id="chart-1">
-                    {{ output|safe }}
+            <div class="card-body" style="height: 650px;">
+                <div id="chart-container">
+
                 </div>
+
+                <script>
+                    const data = {{ share_data|safe }};
+                    const schema = [{
+                        "name": "Date",
+                        "type": "date",
+                        "format": "%Y-%m-%d"
+                    }, {
+                        "name": "Total Amount",
+                        "type": "number"
+                    }, {
+                        "name": "Total Quantity",
+                        "type": "number"
+                    }, {
+                        "name": "Number of Transaction",
+                        "type": "number"
+                    }];
+
+                    const dataStore = new FusionCharts.DataStore();
+                    const dataSource = {
+                        chart: {},
+                        caption: {
+                            text: "Share Status for particular day"
+                        },
+                        subcaption: {
+                            text: "Analysis of Total Amount, Total Quantity and Number of Transaction per day"
+                        },
+                        yaxis: [
+                            {
+                                plot: [
+                                    {
+                                        value: "Total Amount",
+                                        connectnulldata: true,
+                                    }
+                                ],
+                                min: "3",
+                                max: "6",
+                                title: "Total Amount",
+                            },
+                            {
+                                plot: [
+                                    {
+                                        value: "Total Quantity",
+                                        connectnulldata: true
+                                    }
+                                ],
+                                min: "18",
+                                max: "30",
+                                title: "Total Quantity"
+                            },
+                            {
+                                plot: [
+                                    {
+                                        value: "Number of Transaction",
+                                        connectnulldata: true
+                                    }
+                                ],
+                                min: "18",
+                                max: "30",
+                                title: "Number of Transaction"
+                            }
+                        ]
+                    };
+                    dataSource.data = dataStore.createDataTable(data, schema);
+
+                    new FusionCharts({
+                        type: "timeseries",
+                        renderAt: "chart-container",
+                        width: "100%",
+                        height: "85%",
+                        dataSource: dataSource
+                    }).render();
+                </script>
             </div>
         </div>
     </div>
