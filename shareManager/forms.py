@@ -31,3 +31,12 @@ class AddShareDataForm(forms.ModelForm):
             raise forms.ValidationError("Please give positive value !")
 
         return x
+
+
+class ShareCompanyForm(forms.ModelForm):
+    share_company_name = forms.ModelChoiceField(
+        queryset=share_manager_models.ShareCompanyName.objects.order_by(
+            'company_full_name'
+        ),
+        required=True
+    )

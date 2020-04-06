@@ -375,6 +375,7 @@ def share_price_history_graphical_view(request):
 
 
 def show_price_history_graphical_view_for_particular_company(request):
+
     data_for = "--------"
     if request.method == "POST":
         pass
@@ -386,4 +387,8 @@ def show_price_history_graphical_view_for_particular_company(request):
         "data_for": data_for,
     }
 
-    return render(request, template_name="shareManager/share_company_graphical_price_history.html", )
+    return render(
+        request,
+        template_name="shareManager/share_company_graphical_price_history.html",
+        context=template_data
+    )
