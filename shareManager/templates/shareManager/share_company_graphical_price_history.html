@@ -1,0 +1,58 @@
+{% extends 'dashboard_base.html' %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        {#        <h3 class="text-dark mb-4">Team</h3>#}
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 font-weight-bold">Share Data for date: {{ date }}
+                    <small> <a href="{% url 'shareManager:show_share_history_graphical_view' %}"
+                               class="float-right text-info">
+                        &nbsp;Show Graphical View of Total Transaction</a> <a href="#"
+                                                                              class="float-right text-info">|</a> <a
+                            class="float-right text-info"
+                            href="{% url 'shareManager:show_share_history' %}">
+                        Show Tabular View&nbsp;
+                    </a></small>
+                </p>
+            </div>
+            <div class="card-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 text-nowrap">
+                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                <label>Show&nbsp;
+                                    <select name="number_of_data_to_show"
+                                            class="form-control form-control-sm custom-select custom-select-sm">
+                                        <option value="100" selected="">All</option>
+                                        {#                                        <option value="200">200</option>#}
+                                        {#                                        <option value="400">400</option>#}
+                                    </select>&nbsp;
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-right dataTables_filter" id="dataTable_filter">
+                                <label>
+                                    <input type="search" name="search_by_company_name" autocomplete="off"
+                                           class="form-control form-control-sm"
+                                           aria-controls="dataTable"
+                                           placeholder="Company Name">
+                                </label>
+
+                                <label>
+                                    <input name="share_data_date" class="form-control form-control-sm" type="date">
+                                </label>
+
+                                <input type="submit" class="btn-sm btn-primary" value="Filter">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

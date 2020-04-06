@@ -372,3 +372,18 @@ def share_price_history_graphical_view(request):
     }
 
     return render(request, template_name="shareManager/dashboard_company_detail_graphical.html", context=template_data)
+
+
+def show_price_history_graphical_view_for_particular_company(request):
+    data_for = "--------"
+    if request.method == "POST":
+        pass
+
+    template_data = {
+        "current": "company_detail",
+        "current_for": "share",
+        "company_info_chart": 0,
+        "data_for": data_for,
+    }
+
+    return render(request, template_name="shareManager/share_company_graphical_price_history.html", )

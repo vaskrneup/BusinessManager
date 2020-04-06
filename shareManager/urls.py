@@ -18,7 +18,9 @@ urlpatterns = [
     path("share-price-history/", share_manager_views.share_price_history, name="show_share_history"),
     path("share-price-history-graphical-view/", share_manager_views.share_price_history_graphical_view,
          name="show_share_history_graphical_view"),
-
+    path("share-price-history-graphical-view-for-company/",
+         share_manager_views.show_price_history_graphical_view_for_particular_company,
+         name="share_company_graphical_view_for_particular_company")
     # rendering for unauthenticated users !
 
 ]

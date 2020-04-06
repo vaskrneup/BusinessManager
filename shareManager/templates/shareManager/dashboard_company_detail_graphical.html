@@ -7,8 +7,14 @@
         <div class="card shadow">
             <div class="card-header py-3">
                 <p class="text-primary m-0 font-weight-bold">{{ data_for }}
-                    <a href="{% url 'shareManager:show_share_history' %}" class="float-right text-info">
-                        Show Tabular View</a>
+                    <small> <a href="{% url 'shareManager:show_share_history' %}"
+                               class="float-right text-info">
+                        &nbsp;Show Tabular View of Total Transaction</a> <a href="#"
+                                                                              class="float-right text-info">|</a> <a
+                            class="float-right text-info"
+                            href="{% url 'shareManager:share_company_graphical_view_for_particular_company' %}">
+                        Show Graphical View of Particular company&nbsp;
+                    </a></small>
                 </p>
             </div>
             <div class="card-body" style="height: 650px;">
