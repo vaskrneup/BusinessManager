@@ -375,16 +375,50 @@ def share_price_history_graphical_view(request):
 
 
 def show_price_history_graphical_view_for_particular_company(request):
+    share_company_data_cache = ShareCompanyDetail.objects.all()
 
-    data_for = "--------"
+    share_company_form = share_forms.ShareCompanyForm()
+    company_name = "-------------"
+    data = []
+    last_date = ""
+    first_date = ""
+
     if request.method == "POST":
-        pass
+        share_company_form = share_forms.ShareCompanyForm(request.POST)
+
+        if share_company_form.is_valid():
+            company_name = share_company_form.cleaned_data.get("share_company_name")
+            share_company_data = share_company_data_cache.filter(
+                company_name__company_full_name=company_name
+            )
+
+            company = ""
+            first_date = share_company_data.first().company_transaction_date
+            for company in share_company_data:
+                data.append(
+                    [
+                        str(company.company_transaction_date),
+                        float(company.company_previous_closing),
+                        float(company.company_max_price),
+                        float(company.company_min_price),
+                        float(company.company_closing_price),
+                        int(company.company_traded_shares)
+                    ]
+                )
+
+            last_date = company.company_transaction_date
+        else:
+            messages.info(request, "Please select a valid company name !")
 
     template_data = {
+        "share_company_form": share_company_form,
         "current": "company_detail",
         "current_for": "share",
         "company_info_chart": 0,
-        "data_for": data_for,
+        "company_name": company_name,
+        "share_data": data,
+        "last_date": last_date,
+        "first_date": first_date,
     }
 
     return render(

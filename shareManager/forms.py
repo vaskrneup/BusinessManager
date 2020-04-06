@@ -33,7 +33,7 @@ class AddShareDataForm(forms.ModelForm):
         return x
 
 
-class ShareCompanyForm(forms.ModelForm):
+class ShareCompanyForm(forms.Form):
     share_company_name = forms.ModelChoiceField(
         queryset=share_manager_models.ShareCompanyName.objects.order_by(
             'company_full_name'

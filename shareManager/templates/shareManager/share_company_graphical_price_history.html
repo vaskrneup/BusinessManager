@@ -1,4 +1,6 @@
 {% extends 'dashboard_base.html' %}
+{% load user_template_tags %}
+
 
 {% block body %}
 
@@ -6,7 +8,7 @@
         {#        <h3 class="text-dark mb-4">Team</h3>#}
         <div class="card shadow">
             <div class="card-header py-3">
-                <p class="text-primary m-0 font-weight-bold">Share Data for date: {{ date }}
+                <p class="text-primary m-0 font-weight-bold">{{ company_name }}
                     <small> <a href="{% url 'shareManager:show_share_history_graphical_view' %}"
                                class="float-right text-info">
                         &nbsp;Show Graphical View of Total Transaction</a> <a href="#"
@@ -24,34 +26,96 @@
                         <div class="col-md-6 text-nowrap">
                             <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                                 <label>Graph For&nbsp;
-                                    <select name="number_of_data_to_show"
-                                            class="form-control form-control-sm custom-select custom-select-sm">
-                                        <option value="" selected="">-------------</option>
-                                        {#                                        <option value="200">200</option>#}
-                                        {#                                        <option value="400">400</option>#}
-                                    </select>&nbsp;
+                                    {{ share_company_form.share_company_name|add_attr:"class:form-control form-control-sm custom-select custom-select-sm" }}
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-md-right dataTables_filter" id="dataTable_filter">
-{#                                <label>#}
-{#                                    <input type="search" name="search_by_company_name" autocomplete="off"#}
-{#                                           class="form-control form-control-sm"#}
-{#                                           aria-controls="dataTable"#}
-{#                                           placeholder="Company Name">#}
-{#                                </label>#}
-{##}
-{#                                <label>#}
-{#                                    <input name="share_data_date" class="form-control form-control-sm" type="date">#}
-{#                                </label>#}
+                                {#                                <label>#}
+                                {#                                    <input type="search" name="search_by_company_name" autocomplete="off"#}
+                                {#                                           class="form-control form-control-sm"#}
+                                {#                                           aria-controls="dataTable"#}
+                                {#                                           placeholder="Company Name">#}
+                                {#                                </label>#}
+                                {##}
+                                {#                                <label>#}
+                                {#                                    <input name="share_data_date" class="form-control form-control-sm" type="date">#}
+                                {#                                </label>#}
 
-                                <input type="submit" class="btn-sm btn-primary" value="Filter">
+                                <input type="submit" class="btn-sm btn-primary" value="Show">
                             </div>
                         </div>
                     </div>
                 </form>
+                <hr>
 
+                <div id="chart-container"></div>
+
+                {% if share_data %}
+                    <script>
+                        const data = {{ share_data|safe }};
+                        const schema = [{
+                            "name": "Date",
+                            "type": "date",
+                            "format": "%Y-%m-%d"
+                        }, {
+                            "name": "Open",
+                            "type": "number"
+                        }, {
+                            "name": "High",
+                            "type": "number"
+                        }, {
+                            "name": "Low",
+                            "type": "number"
+                        }, {
+                            "name": "Close",
+                            "type": "number"
+                        }, {
+                            "name": "Volume",
+                            "type": "number"
+                        }];
+
+                        const dataStore = new FusionCharts.DataStore();
+                        const dataSource = {
+                            chart: {},
+                            caption: {
+                                text: "{{company_name}}"
+                            },
+                            subcaption: {
+                                text: "Stock prices from {{first_date|date:"M d, Y"}} - {{last_date|date:"M d, Y"}}"
+                            },
+                            yaxis: [
+                                {
+                                    plot: {
+                                        value: {
+                                            open: "Open",
+                                            high: "High",
+                                            low: "Low",
+                                            close: "Close"
+                                        },
+                                        type: "candlestick"
+                                    },
+                                    format: {
+                                        prefix: "Rs."
+                                    },
+                                    title: "Stock Value"
+                                }
+                            ]
+                        };
+                        dataSource.data = dataStore.createDataTable(data, schema);
+
+                        new FusionCharts({
+                            type: "timeseries",
+                            renderAt: "chart-container",
+                            width: "100%",
+                            height: "500",
+                            dataSource: dataSource
+                        }).render();
+                    </script>
+                {% else %}
+                    <h3>Please Select a company name !</h3>
+                {% endif %}
             </div>
         </div>
     </div>
