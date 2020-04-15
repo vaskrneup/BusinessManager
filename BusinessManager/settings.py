@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'shareManager.apps.SharemanagerConfig',
     'users.apps.UsersConfig',
+    'business.apps.BusinessConfig',
 ]
 
 MIDDLEWARE = [

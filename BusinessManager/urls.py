@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("my-share/", include("shareManager.urls")),
     path("user/", include("users.urls")),
+    path("business/", include("business.urls"))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
