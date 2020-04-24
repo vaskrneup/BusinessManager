@@ -20,7 +20,9 @@ urlpatterns = [
          name="show_share_history_graphical_view"),
     path("share-price-history-graphical-view-for-company/",
          share_manager_views.show_price_history_graphical_view_for_particular_company,
-         name="share_company_graphical_view_for_particular_company")
+         name="share_company_graphical_view_for_particular_company"),
+    path("share-value-check-form/", share_manager_views.investment_checker,
+         name="share_company_investment_check")
     # rendering for unauthenticated users !
 
 ]

@@ -426,3 +426,69 @@ def show_price_history_graphical_view_for_particular_company(request):
         template_name="shareManager/share_company_graphical_price_history.html",
         context=template_data
     )
+
+
+@login_required
+def investment_checker(request):
+    investment_output_form = None
+
+    if request.method == "POST":
+        check_investment_form = share_forms.ShareInvestmentCheckForm(
+            request.POST,
+        )
+
+        if check_investment_form.is_valid():
+            share_company_cache = ShareCompanyDetail.objects.all()
+            date = check_investment_form.cleaned_data.get("date")
+            company = check_investment_form.cleaned_data.get("share_company_name")
+            share_count = check_investment_form.cleaned_data.get("number_of_share")
+
+            input_date_data = share_company_cache.filter(company_transaction_date=date,
+                                                         company_name=company).last()
+            last_date_data = share_company_cache.filter(company_name=company).last()
+            today_data = share_company_cache.filter(company_transaction_date=datetime.datetime.today().date(),
+                                                    company_name=company)
+
+            profit = 0
+
+            if input_date_data and (last_date_data or today_data):
+                if today_data:
+                    profit = (today_data.company_closing_price - input_date_data.company_closing_price) * share_count
+                else:
+                    profit = (
+                                     last_date_data.company_closing_price - input_date_data.company_closing_price
+                             ) * share_count
+
+            investment_output_form = share_forms.ShareInvestmentResultForm(
+                initial={
+                    "todays_price": today_data.company_closing_price if today_data else 0,
+                    "last_date_price": last_date_data.company_closing_price if last_date_data else 0,
+                    "given_date_price": input_date_data.company_closing_price if input_date_data else 0,
+
+                    "todays_value": today_data.company_closing_price * share_count if today_data else 0,
+                    "given_date_value": input_date_data.company_closing_price * share_count if input_date_data else 0,
+                    "last_date_value": last_date_data.company_closing_price * share_count if last_date_data else 0,
+
+                    "profit_or_loss": profit
+                }
+            )
+    else:
+        check_investment_form = share_forms.ShareInvestmentCheckForm(
+            initial={
+                "number_of_share": 1,
+                "date": datetime.datetime.today().date(),
+            }
+        )
+
+    template_data = {
+        "current": "company_detail",
+        "current_for": "share",
+        "check_investment_form": check_investment_form,
+        "investment_output_form": investment_output_form
+    }
+
+    return render(
+        request,
+        template_name="shareManager/share_investment_checker.html",
+        context=template_data
+    )
