@@ -44,7 +44,6 @@
                         class="nav-link {% if current == 'dashboard' %}active{% endif %}"
                         href="
 
-
                                 {% if current_for == 'user' %}{% url 'users:user_dashboard' %}{% elif current_for == 'share' %}{% url 'shareManager:dashboard_home' %}{% endif %}"><i
                         class="fas fa-tachometer-alt"></i><span>{{ current_for|capfirst }} Dashboard</span></a></li>
                 <li class="nav-item" role="presentation"><a
@@ -82,6 +81,27 @@
                 <li class="nav-item" role="presentation"><a
                         class="nav-link"
                         href="
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                 {% if current_for == 'user' %}{% url 'shareManager:dashboard_home' %}{% elif current_for == 'share' %}{% url 'users:user_dashboard' %}{% endif %}">
                     <i class="fas fa-tachometer-alt"></i><span></span>{% if current_for == 'user' %}Share
                     Dashboard{% elif current_for == 'share' %}User Dashboard{% endif %}</a></li>

@@ -481,7 +481,7 @@ def investment_checker(request):
         )
 
     template_data = {
-        "current": "company_detail",
+        "current": "company_investment",
         "current_for": "share",
         "check_investment_form": check_investment_form,
         "investment_output_form": investment_output_form
