@@ -18,7 +18,6 @@ from .models import (
 from . import forms as share_forms
 from users import forms as user_forms
 
-
 # admin views for doing db things and other updates !
 @login_required
 def update_database(request):

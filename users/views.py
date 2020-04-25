@@ -7,12 +7,18 @@ from django.contrib.auth.models import User
 from . import forms as user_forms
 
 
+# for initial home !
+def home(request):
+    return redirect("users:user_login")
+
+
 # for registering user !
 def user_register(request):
     # check if request is post or not !
     if request.method == "POST":
         # create form with filled data !
-        user_profile_form = user_forms.UserProfileRegistrationForm(request.POST, request.FILES)
+        user_profile_form = user_forms.UserProfileRegistrationForm(
+            request.POST, request.FILES)
         user_register_form = user_forms.UserRegisterForm(request.POST)
 
         # check if form is valid or not !
@@ -60,7 +66,8 @@ def user_login(request):
     # check if user is already authenticated !
     if request.user.is_authenticated:
         # provide message !
-        messages.info(request, "You need to logout before logging in to another account !")
+        messages.info(
+            request, "You need to logout before logging in to another account !")
         # TODO: Change this to other dashboard !
         # redirect to main dashboard !
         return redirect('users:user_dashboard')
@@ -109,7 +116,8 @@ def user_login(request):
                 return redirect('users:user_dashboard')
             else:
                 # if invalid data is provided then flash the message !
-                messages.warning(request, 'Your username/email or password is incorrect !')
+                messages.warning(
+                    request, 'Your username/email or password is incorrect !')
     # the request is get (at least right now) !
     else:
         # create new user form !
@@ -166,7 +174,8 @@ def user_profile(request):
     # create forms with data pre filled !
     # define at first because post have many forms !
     user_update_form = user_forms.UserUpdateSettingsForm(instance=request.user)
-    user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(instance=request.user.userprofile)
+    user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(
+        instance=request.user.userprofile)
 
     # for updating profile picture !
     user_profile_pic_update_form = user_forms.UserProfilePictureUpdateForm()
@@ -174,7 +183,8 @@ def user_profile(request):
     # for updating user contact info !
     user_contact_details_update_form = user_forms.UserGlobalSettingsUpdateForm(
         instance=request.user.userglobalsettings)
-    user_email_update_form = user_forms.UserGlobalSettingsUpdateEmailForm(instance=request.user, req_data=request)
+    user_email_update_form = user_forms.UserGlobalSettingsUpdateEmailForm(
+        instance=request.user, req_data=request)
     user_phone_number_update_form = user_forms.UserGlobalSettingsUpdatePhoneNumberForm(
         instance=request.user.userprofile)
 
@@ -183,7 +193,8 @@ def user_profile(request):
         # check if which form is submitted !
         if "user_identification_card_number" in request.POST:
             # create empty forms !
-            user_update_form = user_forms.UserUpdateSettingsForm(request.POST, instance=request.user)
+            user_update_form = user_forms.UserUpdateSettingsForm(
+                request.POST, instance=request.user)
             user_profile_update_form = user_forms.UserProfileUpdateSettingsForm(request.POST, request.FILES,
                                                                                 instance=request.user.userprofile)
 
@@ -193,9 +204,11 @@ def user_profile(request):
                     _user_profile = user_profile_update_form.save(commit=False)
                     _user_profile.profile_updated = True
                     _user_profile.save()
-                    messages.info(request, "Your data is updated successfully !")
+                    messages.info(
+                        request, "Your data is updated successfully !")
                 else:
-                    messages.warning(request, "You have already updated profile once !")
+                    messages.warning(
+                        request, "You have already updated profile once !")
                 return redirect("users:user_dashboard")
             else:
                 messages.info(request, "Please provide valid data !")
